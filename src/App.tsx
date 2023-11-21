@@ -1,8 +1,8 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import emailjs from '@emailjs/browser';
 import {
   Container,
-  Box,
   TextField,
   Button,
   Typography,
@@ -11,6 +11,8 @@ import {
 } from '@mui/material';
 import handIMG from './assets/images/hand.jpg';
 
+const YOUR_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+
 const App: React.FC = () => {
   const {
     register,
@@ -18,8 +20,35 @@ const App: React.FC = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data: any) => console.log(data);
-  console.log('errors', errors);
+
+  const onSubmit = (data: any) => {
+
+    const formData = {
+      name: data.name,
+      email: data.email,
+      phoneNumber: data.phoneNumber,
+      message: data.message,
+    };
+
+    // console.log('Données du formulaire :', formData);
+
+    emailjs
+      .send(
+        'service_39551s2', 
+        'template_dr8fprn', 
+        formData,
+        YOUR_PUBLIC_KEY
+      )
+      .then(
+        (result) => {
+          // console.log(result.text);
+          // console.log("message sent");
+        },
+        (error) => {
+          console.log(error.text);
+        }
+      );
+  };
 
   return (
     <Container
@@ -33,7 +62,6 @@ const App: React.FC = () => {
         padding: '2rem',
       }}
     >
-      {/* <Grid container spacing={2}> */}
       <Grid container>
         <Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ padding: '2rem' }}>
