@@ -1,6 +1,6 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import emailjs from '@emailjs/browser';
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import emailjs from "@emailjs/browser";
 import {
   Container,
   TextField,
@@ -8,21 +8,22 @@ import {
   Typography,
   Paper,
   Grid,
-} from '@mui/material';
-import handIMG from './assets/images/hand.jpg';
+  Snackbar
+} from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
+import handIMG from "./assets/images/hand.jpg";
 
 const YOUR_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 
-const App: React.FC = () => {
+const Contact: React.FC = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const onSubmit = (data: any) => {
-
     const formData = {
       name: data.name,
       email: data.email,
@@ -33,16 +34,10 @@ const App: React.FC = () => {
     // console.log('Données du formulaire :', formData);
 
     emailjs
-      .send(
-        'service_39551s2', 
-        'template_dr8fprn', 
-        formData,
-        YOUR_PUBLIC_KEY
-      )
+      .send("service_39551s2", "template_dr8fprn", formData, YOUR_PUBLIC_KEY)
       .then(
         (result) => {
-          // console.log(result.text);
-          // console.log("message sent");
+          setSnackbarOpen(true);
         },
         (error) => {
           console.log(error.text);
@@ -50,23 +45,27 @@ const App: React.FC = () => {
       );
   };
 
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
     <Container
       maxWidth="lg"
       sx={{
-        background: '#f4f4f4',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem',
+        background: "#f4f4f4",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
       }}
     >
       <Grid container>
         <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ padding: '2rem' }}>
+          <Paper elevation={3} sx={{ padding: "2rem" }}>
             <Typography variant="h4" align="center" gutterBottom>
-              Contact Us
+              Me contacter
             </Typography>
             <Typography variant="body1" align="center">
               We're open for any suggestion or just to have a chat.
@@ -74,13 +73,13 @@ const App: React.FC = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <TextField
                 fullWidth
-                label="Name *"
+                label="Nom *"
                 variant="standard"
                 InputProps={{
                   sx: {
-                    borderBottom: '1px solid #ccc',
+                    borderBottom: "1px solid #ccc",
                   },
-                  ...register('name', {
+                  ...register("name", {
                     required: true,
                     maxLength: 80,
                   }),
@@ -90,13 +89,13 @@ const App: React.FC = () => {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: 'rgb(255, 71, 71)',
-                    fontSize: '10px',
+                    color: "rgb(255, 71, 71)",
+                    fontSize: "10px",
                   }}
                 >
-                  {errors.name.type === 'required' && 'This field is required.'}
-                  {errors.name.type === 'maxLength' &&
-                    'Max length of name is 80 characters.'}
+                  {errors.name.type === "required" && "Ce champ est obligatoire."}
+                  {errors.name.type === "maxLength" &&
+                    "La longueur maximale est de 80 caractères."}
                 </Typography>
               )}
               <TextField
@@ -105,9 +104,9 @@ const App: React.FC = () => {
                 variant="standard"
                 InputProps={{
                   sx: {
-                    borderBottom: '1px solid #ccc',
+                    borderBottom: "1px solid #ccc",
                   },
-                  ...register('email', {
+                  ...register("email", {
                     required: true,
                     pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                   }),
@@ -117,25 +116,24 @@ const App: React.FC = () => {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: 'rgb(255, 71, 71)',
-                    fontSize: '10px',
+                    color: "rgb(255, 71, 71)",
+                    fontSize: "10px",
                   }}
                 >
-                  {errors.email.type === 'required' &&
-                    'This field is required.'}
-                  {errors.email.type === 'pattern' &&
-                    'Invalid Email Address.'}
+                  {errors.email.type === "required" &&
+                    "Ce champ est obligatoire."}
+                  {errors.email.type === "pattern" && "Adresse mail invalide."}
                 </Typography>
               )}
               <TextField
                 fullWidth
-                label="Phone"
+                label="Numéro de téléphone"
                 variant="standard"
                 InputProps={{
                   sx: {
-                    borderBottom: '1px solid #ccc',
+                    borderBottom: "1px solid #ccc",
                   },
-                  ...register('phoneNumber', {
+                  ...register("phoneNumber", {
                     pattern:
                       /^(?:(?:(?:\+|00)33[\s.-]?)|0)[1-9](?:(?:[\s.-]?[0-9]{2}){4})$/,
                   }),
@@ -145,11 +143,11 @@ const App: React.FC = () => {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: 'rgb(255, 71, 71)',
-                    fontSize: '10px',
+                    color: "rgb(255, 71, 71)",
+                    fontSize: "10px",
                   }}
                 >
-                  Invalid Phone Number
+                  Numéro de téléphone invalide
                 </Typography>
               )}
               <TextField
@@ -160,9 +158,9 @@ const App: React.FC = () => {
                 rows={4}
                 InputProps={{
                   sx: {
-                    borderBottom: '1px solid #ccc',
+                    borderBottom: "1px solid #ccc",
                   },
-                  ...register('message', {
+                  ...register("message", {
                     required: true,
                   }),
                 }}
@@ -171,11 +169,11 @@ const App: React.FC = () => {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: 'rgb(255, 71, 71)',
-                    fontSize: '10px',
+                    color: "rgb(255, 71, 71)",
+                    fontSize: "10px",
                   }}
                 >
-                  This field is required.
+                  Ce champ est obligatoire.
                 </Typography>
               )}
               <Button
@@ -184,9 +182,9 @@ const App: React.FC = () => {
                 color="primary"
                 size="large"
                 onClick={handleSubmit(onSubmit)}
-                sx={{ marginTop: '1rem' }}
+                sx={{ marginTop: "1rem" }}
               >
-                Send Message
+                Envoyer le message
               </Button>
             </form>
           </Paper>
@@ -195,12 +193,28 @@ const App: React.FC = () => {
           <img
             src={handIMG}
             alt="hand"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </Grid>
       </Grid>
+      {/* Snackbar pour afficher la confirmation */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          severity="success"
+          onClose={handleSnackbarClose}
+        >
+          Votre message a été envoyé avec succès!
+        </MuiAlert>
+      </Snackbar>
     </Container>
   );
 };
 
-export default App;
+export default Contact;
+
